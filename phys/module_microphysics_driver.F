@@ -22,6 +22,53 @@ SUBROUTINE microphysics_driver(                                          &
                       ,ips,ipe, jps,jpe, kps,kpe                         &
                       ,i_start,i_end,j_start,j_end,kts,kte               &
                       ,num_tiles, naer                                   &
+!=====================
+                      !MY MORRISON VARIABLES
+                      ,qg3dten                                             &
+                      ,pracg3d                                             &
+                      ,psacwg3d                                            &
+                      ,pgsacw3d                                            &
+                      ,pgracs3d                                            &
+                      ,prdg3d                                              &
+                      ,eprdg3d                                             &
+                      ,mnuccr3d                                            & 
+                      ,piacr3d                                             &
+                      ,praci3d                                             &
+                      ,psacr3d                                             &
+                      ,pgmlt3d                                             &
+                      ,evpmg3d                                             &
+                      ,qgsten3d                                            &
+!=====================
+                      ! MY ISHMAEL VARIABLES
+                      ,ish_vap_growth1                                      &
+                      ,ish_vap_growth2                                      &
+                      ,ish_rime_growth1                                     &    
+                      ,ish_rime_growth2                                     &
+                      ,ish_melt1                                            &    
+                      ,ish_melt2                                            &
+                      ,ish_nuc1                                             &    
+                      ,ish_nuc2                                             &
+                      ,ish_ice_rain1                                        &    
+                      ,ish_ice_rain2                                        &    
+                      ,ish_agg1                                             &
+                      ,ish_agg2                                             &    
+                      ,ish_sedimentation1                                   &
+                      ,ish_sedimentation2                                   &    
+                      ,ish_rime_density1                                    &
+                      ,ish_rime_density2                                    &
+!=====================
+                      ,ish_iwci1                                           &    
+                      ,ish_iwci2                                           &
+                      ,ish_iwcf1                                           &    
+                      ,ish_iwcf2                                           &
+                      ,ish_vi1                                             &    
+                      ,ish_vi2                                             &
+                      ,ish_vf1                                             &    
+                      ,ish_vf2                                             &
+                      ,ish_rni1                                            &    
+                      ,ish_rni2                                            &
+                      ,ish_rnf1                                            &    
+                      ,ish_rnf2                                            &
 !======================
                       !Variables required for CAMMGMP Scheme
                       ,dlf,dlf2,t_phy,p_hyd,p8w_hyd,tke_pbl,z_at_w,qfx   &
@@ -406,7 +453,53 @@ SUBROUTINE microphysics_driver(                                          &
      &           i_start,i_end,j_start,j_end
 
    LOGICAL,      INTENT(IN   )    ::   warm_rain
+!My MORRISON VARIABLES ==========================================================
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: qg3dten
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: pracg3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: psacwg3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: pgsacw3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: pgracs3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: prdg3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: eprdg3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: mnuccr3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: piacr3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: praci3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: psacr3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: pgmlt3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: evpmg3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: qgsten3d
+
+!My ISHMAEL VARIABLES  ==========================================================
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vap_growth1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vap_growth2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rime_growth1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rime_growth2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_melt1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_melt2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_nuc1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_nuc2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ice_rain1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ice_rain2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_agg1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_agg2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_sedimentation1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_sedimentation2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rime_density1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rime_density2
 !
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_iwci1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_iwci2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_iwcf1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_iwcf2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vi1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vi2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vf1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vf2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rni1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rni2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rnf1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rnf2
+! ==========================================================
    REAL, DIMENSION( ims:ime , kms:kme , jms:jme ),                    &
          INTENT(INOUT) ::                                         th
 !
@@ -1186,6 +1279,34 @@ REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                        &
              CALL mp_jensen_ishmael(             &
              ITIMESTEP=itimestep,                &  !*                                                                         
              DT_IN=dt,                           &  !*
+             ish_vap_growth1=ish_vap_growth1,          &  !* My Variables
+             ish_vap_growth2=ish_vap_growth2,          &  !* My Variables             
+             ish_rime_growth1=ish_rime_growth1,        &  !* My Variables
+             ish_rime_growth2=ish_rime_growth2,        &  !* My Variables
+             ish_melt1=ish_melt1,                      &  !* My Variables
+             ish_melt2=ish_melt2,                      &  !* My Variables
+             ish_nuc1=ish_nuc1,                        &  !* My
+             ish_nuc2=ish_nuc2,                        &  !* My
+             ish_ice_rain1=ish_ice_rain1,              &  !* My
+             ish_ice_rain2=ish_ice_rain2,              &  !* My
+             ish_agg1=ish_agg1,                        &  !* My
+             ish_agg2=ish_agg2,                        &  !* My
+             ish_sedimentation1=ish_sedimentation1,    &  !* My
+             ish_sedimentation2=ish_sedimentation2,    &  !* My
+             ish_rime_density1=ish_rime_density1,      &  !* My Variables
+             ish_rime_density2=ish_rime_density2,      & 
+             ish_iwci1=ish_iwci1,                        &  !* TEMP VARS PRD
+             ish_iwci2=ish_iwci2,                        &  !* TEMP VARS PRD
+             ish_iwcf1=ish_iwcf1,                        &  !* 
+             ish_iwcf2=ish_iwcf2,                        &  !*
+             ish_vi1=ish_vi1,                            &  !*
+             ish_vi2=ish_vi2,                            &  !* 
+             ish_vf1=ish_vf1,                            &  !* 
+             ish_vf2=ish_vf2,                            &  !*
+             ish_rni1=ish_rni1,                          &  !* 
+             ish_rni2=ish_rni2,                          &  !*
+             ish_rnf1=ish_rnf1,                          &  !* 
+             ish_rnf2=ish_rnf2,                          &  !*
              P=p,                                &  !*                                                                         
              DZ=dz8w,                            &  !* !
              TH=th,                              &  !*                                                                         
@@ -1248,7 +1369,21 @@ REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                        &
          PRESENT (RAINNC ) .AND. PRESENT (RAINNCV) .AND. &
          PRESENT ( W      )  ) THEN
          CALL mp_morr_two_moment(                            &
-                     ITIMESTEP=itimestep,                &  !*
+                     ITIMESTEP=itimestep,                    &  !*
+                     qg3dten=qg3dten,                        &  !* My Variables
+                     pracg3d=pracg3d,                        &  !* My Variables
+                     psacwg3d=psacwg3d,                      &  !* My Variables
+                     pgsacw3d=pgsacw3d,                      &  !* My Variables
+                     pgracs3d=pgracs3d,                      &  !* My Variables
+                     prdg3d=prdg3d,                          &  !* My Variables
+                     eprdg3d=eprdg3d,                        &  !* My Variables
+                     mnuccr3d=mnuccr3d,                      &  !* My Variables
+                     piacr3d=piacr3d,                        &  !* My Variables
+                     praci3d=praci3d,                        &  !* My Variables
+                     psacr3d=psacr3d,                        &  !* My Variables
+                     pgmlt3d=pgmlt3d,                        &  !* My Variables
+                     evpmg3d=evpmg3d,                        &  !* My Variables
+                     qgsten3d=qgsten3d,                      &  !* My Variables
                      TH=th,                              &  !*
                      QV=qv_curr,                         &  !*
                      QC=qc_curr,                         &  !*

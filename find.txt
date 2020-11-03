@@ -1,0 +1,10 @@
+./phys/module_mp_morr_two_moment.F:      QG3DTEN(K) = QG3DTEN(K)+(PGMLT(K)+EVPMG(K)-PRACG(K))
+./phys/module_mp_morr_two_moment.F:      QG3DTEN(K) = QG3DTEN(K)+(PRACG(K)+PSACWG(K)+PGSACW(K)+PGRACS(K)+ &
+./phys/module_mp_morr_two_moment.F:	DUMG(K) = QG3D(K)+QG3DTEN(K)*DT
+./phys/module_mp_morr_two_moment.F:        QG3DTEN(K)=QG3DTEN(K)+QGSTEN(K)
+./phys/module_mp_morr_two_moment.F:          QG3D(k)        = QG3D(k)+QG3DTEN(k)*DT
+./phys/module_mp_morr_two_moment_aero.F:      QG3DTEN(K) = QG3DTEN(K)+(PGMLT(K)+EVPMG(K)-PRACG(K))
+./phys/module_mp_morr_two_moment_aero.F:      QG3DTEN(K) = QG3DTEN(K)+(PRACG(K)+PSACWG(K)+PGSACW(K)+PGRACS(K)+ &
+./phys/module_mp_morr_two_moment_aero.F:	DUMG(K) = QG3D(K)+QG3DTEN(K)*DT
+./phys/module_mp_morr_two_moment_aero.F:        QG3DTEN(K)=QG3DTEN(K)+QGSTEN(K)
+./phys/module_mp_morr_two_moment_aero.F:          QG3D(k)        = QG3D(k)+QG3DTEN(k)*DT

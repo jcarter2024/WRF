@@ -558,11 +558,14 @@ END SUBROUTINE MORR_TWO_MOMENT_INIT
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                       &
-                TH, QV, QC, QR, QI, QS, QG, NI, NS, NR, NG, &
+SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                          &
+                qg3dten, pracg3d, psacwg3d, pgsacw3d, pgracs3d,   & !MY MORRISON VARS
+                prdg3d, eprdg3d, mnuccr3d, piacr3d, praci3d,      &
+                psacr3d, pgmlt3d, evpmg3d, qgsten3d,              &                                 
+                TH, QV, QC, QR, QI, QS, QG, NI, NS, NR, NG,       &
                 RHO, PII, P, DT_IN, DZ, HT, W,          &
                 RAINNC, RAINNCV, SR,                    &
-		SNOWNC,SNOWNCV,GRAUPELNC,GRAUPELNCV,    & ! hm added 7/13/13
+                SNOWNC,SNOWNCV,GRAUPELNC,GRAUPELNCV,    & ! hm added 7/13/13
                 refl_10cm, diagflag, do_radar_ref,      & ! GT added for reflectivity calcs
                 qrcuten, qscuten, qicuten               & ! hm added
                ,F_QNDROP, qndrop                        & ! hm added, wrf-chem 
@@ -571,7 +574,7 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                       &
                ,ITS,ITE, JTS,JTE, KTS,KTE               & ! tile   dims            )
 !jdf		   ,C2PREC3D,CSED3D,ISED3D,SSED3D,GSED3D,RSED3D & ! HM ADD, WRF-CHEM
                ,rainprod, evapprod                      &
-		   ,QLSINK,PRECR,PRECI,PRECS,PRECG &        ! HM ADD, WRF-CHEM
+               ,QLSINK,PRECR,PRECI,PRECS,PRECG &        ! HM ADD, WRF-CHEM
                                             )
  
 ! QV - water vapor mixing ratio (kg/kg)
@@ -647,7 +650,13 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                       &
 ! Temporary changed from INOUT to IN
 
    REAL, DIMENSION(ims:ime, kms:kme, jms:jme), INTENT(INOUT):: &
-                          qv, qc, qr, qi, qs, qg, ni, ns, nr, TH, NG   
+                          qv, qc, qr, qi, qs, qg, ni, ns, nr, TH, NG
+
+!================= MY MORRISON VARIABLES
+   REAL, DIMENSION(ims:ime, kms:kme, jms:jme), INTENT(INOUT):: &
+                          qg3dten, pracg3d, psacwg3d, pgsacw3d, pgracs3d, prdg3d, eprdg3d, mnuccr3d, &
+                          piacr3d, praci3d, psacr3d, pgmlt3d, evpmg3d, qgsten3d 
+
 !jdf                      qndrop ! hm added, wrf-chem
    REAL, DIMENSION(ims:ime, kms:kme, jms:jme), optional,INTENT(INOUT):: qndrop
 !jdf  REAL, DIMENSION(ims:ime, kms:kme, jms:jme),INTENT(INOUT):: CSED3D, &
@@ -687,6 +696,8 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                       &
                             EFFC1D, EFFI1D, EFFS1D, EFFR1D,DZ1D,   &
    ! HM ADD GRAUPEL
                             QG_TEND1D, NG_TEND1D, QG1D, NG1D, EFFG1D, &
+                           PRACG, PSACWG, PGSACW, PGRACS, PRDG, EPRDG, MNUCCR, &
+                           PIACR, PRACI, PSACR, PGMLT, EVPMG, &
 
 ! ADD SEDIMENTATION TENDENCIES (UNITS OF KG/KG/S)
                             QGSTEN,QRSTEN, QISTEN, QNISTEN, QCSTEN, &
@@ -775,8 +786,23 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                       &
 ! HM ADD GRAUPEL
           QG1D(K)       = QG(I,K,j)
           NG1D(K)       = NG(I,K,j)
+! NEED TO ZERO OUT TENDENCY TERMS FOR EACH TIMESTEP 
+!INCLUDING MY VARIABLES!!
           QG_TEND1D(K)  = 0.
           NG_TEND1D(K)  = 0.
+          PRACG(k)=0.
+          PSACWG(k)=0.
+          PGSACW(k)=0.
+          PGRACS(k)=0.
+          PRDG(k)=0.
+          EPRDG(k)=0.
+          MNUCCR(k)=0.
+          PIACR(k)=0.
+          PRACI(k)=0.
+          PSACR(k)=0.
+          PGMLT(k)=0.
+          EVPMG(k)=0.
+          QGSTEN(k)=0.
 
           T1D(k)        = T(i,k,j)
           QV1D(k)       = QV(i,k,j)
@@ -808,19 +834,23 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                       &
       call MORR_TWO_MOMENT_MICRO(QC_TEND1D, QI_TEND1D, QNI_TEND1D, QR_TEND1D,            &
        NI_TEND1D, NS_TEND1D, NR_TEND1D,                                                  &
        QC1D, QI1D, QS1D, QR1D,NI1D, NS1D, NR1D,                                          &
-       T_TEND1D,QV_TEND1D, T1D, QV1D, P1D, DZ1D, W1D, WVAR1D,                   &
+       T_TEND1D,QV_TEND1D, T1D, QV1D, P1D, DZ1D, W1D, WVAR1D,                            &
        PRECPRT1D,SNOWRT1D,                                                               &
-       SNOWPRT1D,GRPLPRT1D,                 & ! hm added 7/13/13
+       SNOWPRT1D,GRPLPRT1D,                                                              & ! hm added 7/13/13
        EFFC1D,EFFI1D,EFFS1D,EFFR1D,DT,                                                   &
                                             IMS,IME, JMS,JME, KMS,KME,                   &
                                             ITS,ITE, JTS,JTE, KTS,KTE,                   & ! HM ADD GRAUPEL
-                                    QG_TEND1D,NG_TEND1D,QG1D,NG1D,EFFG1D, &
-                                    qrcu1d, qscu1d, qicu1d, &
+                                    QG_TEND1D,NG_TEND1D,QG1D,NG1D,EFFG1D,                &
+                                    qrcu1d, qscu1d, qicu1d,                              &
 ! ADD SEDIMENTATION TENDENCIES
-                                  QGSTEN,QRSTEN,QISTEN,QNISTEN,QCSTEN, &
-                                  nc1d, nc_tend1d, iinum, C2PREC,CSED,ISED,SSED,GSED,RSED & !wrf-chem
+                                  QGSTEN,QRSTEN,QISTEN,QNISTEN,QCSTEN,                   &
+                                  nc1d, nc_tend1d, iinum, C2PREC,CSED,ISED,SSED,GSED,RSED, & !wrf-chem
+!ADD MY VARIABLES THAT ARENT ALREADY INCLUDED
+                                  PRACG, PSACWG, PGSACW, PGRACS,                         &
+                                  PRDG, EPRDG, MNUCCR, PIACR, PRACI,                     &
+                                  PSACR, PGMLT, EVPMG                                   & 
 #if (WRF_CHEM == 1)
-                                  ,rainprod1d, evapprod1d & !wrf-chem
+                                  ,rainprod1d, evapprod1d                                 & !wrf-chem
 #endif
                        )
 
@@ -853,6 +883,20 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                       &
           EFFR(i,k,j)      = EFFR1D(k)
 	  EFFG(I,K,j)      = EFFG1D(K)
 
+          qg3dten(i,k,j)   = QG_TEND1D(k) ! MY variables ========
+          pracg3d(i,k,j)     = PRACG(k)
+          psacwg3d(i,k,j)    = PSACWG(k)
+          pgsacw3d(i,k,j)    = PGSACW(k)
+          pgracs3d(i,k,j)    = PGRACS(k)
+          prdg3d(i,k,j)      = PRDG(k)
+          eprdg3d(i,k,j)     = EPRDG(k)
+          mnuccr3d(i,k,j)    = MNUCCR(k)
+          piacr3d(i,k,j)     = PIACR(k)
+          praci3d(i,k,j)     = PRACI(k)
+          psacr3d(i,k,j)     = PSACR(k)
+          pgmlt3d(i,k,j)     = PGMLT(k)
+          evpmg3d(i,k,j)     = EVPMG(k)
+          qgsten3d(i,k,j)    = QGSTEN(k)
 ! wrf-chem
           IF (flag_qndrop .AND. PRESENT( qndrop )) THEN
              qndrop(i,k,j) = nc1d(k)
@@ -914,15 +958,18 @@ END SUBROUTINE MP_MORR_TWO_MOMENT
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       SUBROUTINE MORR_TWO_MOMENT_MICRO(QC3DTEN,QI3DTEN,QNI3DTEN,QR3DTEN,         &
        NI3DTEN,NS3DTEN,NR3DTEN,QC3D,QI3D,QNI3D,QR3D,NI3D,NS3D,NR3D,              &
-       T3DTEN,QV3DTEN,T3D,QV3D,PRES,DZQ,W3D,WVAR,PRECRT,SNOWRT,            &
-       SNOWPRT,GRPLPRT,                & ! hm added 7/13/13
+       T3DTEN,QV3DTEN,T3D,QV3D,PRES,DZQ,W3D,WVAR,PRECRT,SNOWRT,                  &
+       SNOWPRT,GRPLPRT,                                                          & ! hm added 7/13/13
        EFFC,EFFI,EFFS,EFFR,DT,                                                   &
                                             IMS,IME, JMS,JME, KMS,KME,           &
                                             ITS,ITE, JTS,JTE, KTS,KTE,           & ! ADD GRAUPEL
                         QG3DTEN,NG3DTEN,QG3D,NG3D,EFFG,qrcu1d,qscu1d, qicu1d,    &
-                        QGSTEN,QRSTEN,QISTEN,QNISTEN,QCSTEN, &
-                        nc3d,nc3dten,iinum, & ! wrf-chem
-				c2prec,CSED,ISED,SSED,GSED,RSED  &  ! hm added, wrf-chem
+                        QGSTEN,QRSTEN,QISTEN,QNISTEN,QCSTEN,                     &
+                        nc3d,nc3dten,iinum,                                      & ! wrf-chem
+                        c2prec,CSED,ISED,SSED,GSED,RSED,                         &  ! hm added,wrf-chem
+                        PRACG,PSACWG,PGSACW,PGRACS,                              & 
+                        PRDG,EPRDG,MNUCCR,PIACR,PRACI,                           & !MY VARS
+                        PSACR,PGMLT,EVPMG                                        &
 #if (WRF_CHEM == 1)
         ,rainprod, evapprod &
 #endif
@@ -957,7 +1004,6 @@ END SUBROUTINE MP_MORR_TWO_MOMENT
 ! INPUT/OUTPUT PARAMETERS                                 ! DESCRIPTION (UNITS)
       INTEGER, INTENT( IN)  :: IMS,IME, JMS,JME, KMS,KME,          &
                                ITS,ITE, JTS,JTE, KTS,KTE
-
       REAL, DIMENSION(KTS:KTE) ::  QC3DTEN            ! CLOUD WATER MIXING RATIO TENDENCY (KG/KG/S)
       REAL, DIMENSION(KTS:KTE) ::  QI3DTEN            ! CLOUD ICE MIXING RATIO TENDENCY (KG/KG/S)
       REAL, DIMENSION(KTS:KTE) ::  QNI3DTEN           ! SNOW MIXING RATIO TENDENCY (KG/KG/S)

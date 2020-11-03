@@ -215,7 +215,17 @@ contains
   !--------------------------------------------------------------------------------------------------------------!
   !.. The main subroutine.
 
-  subroutine  MP_JENSEN_ISHMAEL(ITIMESTEP, DT_IN, P, DZ, &  
+  subroutine  MP_JENSEN_ISHMAEL(ITIMESTEP, DT_IN,        &
+       ish_vap_growth1, ish_vap_growth2,                 &
+       ish_rime_growth1, ish_rime_growth2,  ish_melt1,   &
+       ish_melt2, ish_nuc1, ish_nuc2,  ish_ice_rain1,    &
+       ish_ice_rain2, ish_agg1, ish_agg2,                &
+       ish_sedimentation1, ish_sedimentation2,           &  
+       ish_rime_density1, ish_rime_density2,             &
+       ish_iwci1, ish_iwci2, ish_iwcf1, ish_iwcf2,       & 
+       ish_vi1, ish_vi2, ish_vf1, ish_vf2, ish_rni1,     &
+       ish_rni2, ish_rnf1, ish_rnf2,                     &
+       P, DZ,                                            &  
        TH, QV, QC, QR, NR, QI1, NI1, AI1, CI1,           &
        QI2, NI2, AI2, CI2,                               &
        QI3, NI3, AI3, CI3,                               &
@@ -305,7 +315,19 @@ contains
          diag_vmi3d_1, diag_di3d_1, diag_rhopo3d_1, diag_phii3d_1,   &
          diag_vmi3d_2, diag_di3d_2, diag_rhopo3d_2, diag_phii3d_2,   &
          diag_vmi3d_3, diag_di3d_3, diag_rhopo3d_3, diag_phii3d_3,   &
-         diag_itype_1, diag_itype_2, diag_itype_3                                    
+         diag_itype_1, diag_itype_2, diag_itype_3   
+                                 
+  !.. MY 3D VARIABLES
+    real, dimension(ims:ime, kms:kme, jms:jme), intent(inout) ::     &
+       ish_vap_growth1, ish_vap_growth2,                 &    
+       ish_rime_growth1, ish_rime_growth2,  ish_melt1,   &
+       ish_melt2, ish_nuc1, ish_nuc2,  ish_ice_rain1,    &    
+       ish_ice_rain2, ish_agg1, ish_agg2,                &    
+       ish_sedimentation1, ish_sedimentation2,           &    
+       ish_rime_density1, ish_rime_density2,             &
+       ish_iwci1, ish_iwci2, ish_iwcf1, ish_iwcf2,       &
+       ish_vi1, ish_vi2, ish_vf1, ish_vf2, ish_rni1,     &
+       ish_rni2, ish_rnf1, ish_rnf2                      
 
   !.. 2D variables
     real, dimension(ims:ime, jms:jme), intent(inout) ::              &
@@ -330,7 +352,14 @@ contains
     real, dimension(cat, kts:kte) ::               &  
          qi1d, ni1d, ai1d, ci1d,                   &
          vmi1d, di1d, rhopo1d, phii1d, icetype1d
+   !add MY VARIABLES
+    real, dimension(cat, kts:kte) ::                    &
+       vap_growth, rime_growth, melt, nuc, ice_rain,     &    
+        agg, sed_equation 
 
+    real, dimension(cat, kts:kte) ::                     &
+       rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k
+             
   !.. Precipitation
     real :: qrpre1d
     real, dimension(cat) :: qipre1d
@@ -391,13 +420,44 @@ contains
              RHOPO1D(ICE3,k) = 0.
              PHII1D(ICE3,k)  = 0.
              ICETYPE1D(ICE3,k) =  0.
+  !..MY VARIABLES zero out process rates!!
+             vap_growth(ICE1,k)     = 0.
+             vap_growth(ICE2,k)     = 0.
+             rime_growth(ICE1,k)    = 0.
+             rime_growth(ICE2,k)    = 0.
+             melt(ICE1,k)           = 0.
+             melt(ICE2,k)           = 0.
+             nuc(ICE1,k)            = 0.
+             nuc(ICE2,k)            = 0.                   
+             ice_rain(ICE1,k)       = 0.          
+             ice_rain(ICE2,k)       = 0. 
+             agg(ICE1,k)            = 0.               
+             agg(ICE2,k)            = 0.
+             sed_equation(ICE1,k)   = 0.
+             sed_equation(ICE2,k)   = 0.
+             rime_density(ICE1,k)   = 0.
+             rime_density(ICE2,k)   = 0.
+             iwci_k(ICE1,k)        = 0.
+             iwci_k(ICE2,k)        = 0.
+             iwcf_k(ICE1,k)        = 0.
+             iwcf_k(ICE2,k)        = 0.
+             vi_k(ICE1,k)        = 0.
+             vi_k(ICE2,k)        = 0.
+             vf_k(ICE1,k)        = 0.
+             vf_k(ICE2,k)        = 0.
+             rni_k(ICE1,k)        = 0.
+             rni_k(ICE2,k)        = 0.
+             rnf_k(ICE1,k)        = 0.
+             rnf_k(ICE2,k)        = 0. 
           enddo !.. (vertical k-loop)
 
   !.. Call me Ishmael.
           call me_ishmael(itimestep, kts, kte, i, j, dt_in, p1d, dz1d,   &
                th1d, qv1d, qc1d, qr1d, nr1d, qi1d, ni1d, ai1d, ci1d,     &
                CAT, ICE1, ICE2, ICE3, effc1d, effi1d, dbz1d, icetype1d,  &
-               vmi1d, di1d, rhopo1d, phii1d, qrpre1d, qipre1d)
+               vmi1d, di1d, rhopo1d, phii1d, qrpre1d, qipre1d, vap_growth, &
+               rime_growth, melt, nuc, ice_rain, agg, sed_equation, rime_density, &
+               iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k)
 
   !.. Send the 1D columns from newmicro back to WRF
           do k=kts,kte !.. k loop (vertical)
@@ -439,6 +499,35 @@ contains
              DIAG_RHOPO3D_3(i,k,j)= rhopo1d(ICE3,k)
              DIAG_PHII3D_3(i,k,j) = phii1d(ICE3,k)
              DIAG_ITYPE_3(i,k,j)  = icetype1d(ICE3,k)
+  !..MY VARIABLES change to include new vars!!!!
+             ish_vap_growth1(i,k,j)   = vap_growth(ICE1,k)
+             ish_vap_growth2(i,k,j)   = vap_growth(ICE2,k)
+             ish_rime_growth1(i,k,j)  =rime_growth(ICE1,k)
+             ish_rime_growth2(i,k,j)  =rime_growth(ICE2,k)
+             ish_melt1(i,k,j)         =melt(ICE1,k)
+             ish_melt2(i,k,j)         =melt(ICE2,k)
+             ish_nuc1(i,k,j)          =nuc(ICE1,k)
+             ish_nuc2(i,k,j)          =nuc(ICE2,k)     
+             ish_ice_rain1(i,k,j)     =ice_rain(ICE1,k)
+             ish_ice_rain2(i,k,j)     =ice_rain(ICE2,k)      
+             ish_agg1(i,k,j)          =agg(ICE1,k)
+             ish_agg2(i,k,j)          =agg(ICE2,k)     
+             ish_sedimentation1(i,k,j)=sed_equation(ICE1,k)
+             ish_sedimentation2(i,k,j)=sed_equation(ICE2,k)
+             ish_rime_density1(i,k,j) =rime_density(ICE1,k)
+             ish_rime_density2(i,k,j) =rime_density(ICE2,k)
+             ish_iwci1(i,k,j)         =iwci_k(ICE1,k)
+             ish_iwci2(i,k,j)         =iwci_k(ICE2,k)
+             ish_iwcf1(i,k,j)         =iwcf_k(ICE1,k)
+             ish_iwcf2(i,k,j)         =iwci_k(ICE2,k)
+             ish_vi1(i,k,j)           =vi_k(ICE1,k)
+             ish_vi2(i,k,j)           =vi_k(ICE2,k)
+             ish_vf1(i,k,j)           =vf_k(ICE1,k)
+             ish_vf2(i,k,j)           =vf_k(ICE2,k)
+             ish_rni1(i,k,j)          =rni_k(ICE1,k)
+             ish_rni2(i,k,j)          =rni_k(ICE2,k)
+             ish_rnf1(i,k,j)          =rnf_k(ICE1,k)
+             ish_rnf2(i,k,j)          =rnf_k(ICE2,k)
           enddo
 
   !.. Accumulated precipitation and precipitation rates
@@ -461,7 +550,8 @@ contains
   subroutine me_ishmael(it, kts, kte, i, j, dt, pres_e, dzmic,          &
        theta, qv, qc, qr, nr, qi, ni, ai, ci, CAT, ICE1, ICE2, ICE3,    &
        effc1d, effi1d, dbz1d, icetype1d, vmi1d, di1d, rhopo1d, phii1d,  &
-       qrpre1d, qipre1d)
+       qrpre1d, qipre1d, vap_growth,rime_growth, melt, nuc, ice_rain,   &
+       agg, sed_equation, rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k)
 
     implicit none
     
@@ -498,6 +588,22 @@ contains
     real, dimension(cat, kts:kte), intent(inout) :: di1d 
     real, dimension(cat, kts:kte), intent(inout) :: icetype1d
     real :: dbzr,dbzsum
+
+  !..MY VARIABLES!
+     real, dimension(cat, kts:kte), intent(inout) :: vap_growth
+     real, dimension(cat, kts:kte), intent(inout) :: rime_growth
+     real, dimension(cat, kts:kte), intent(inout) :: melt
+     real, dimension(cat, kts:kte), intent(inout) :: nuc
+     real, dimension(cat, kts:kte), intent(inout) :: ice_rain
+     real, dimension(cat, kts:kte), intent(inout) :: agg
+     real, dimension(cat, kts:kte), intent(inout) :: sed_equation
+     real, dimension(cat, kts:kte), intent(inout) :: rime_density
+     real, dimension(cat, kts:kte), intent(inout) :: iwci_k
+     real, dimension(cat, kts:kte), intent(inout) :: iwcf_k
+     real, dimension(cat, kts:kte), intent(inout) :: vi_k
+     real, dimension(cat, kts:kte), intent(inout) :: vf_k
+     real, dimension(cat, kts:kte), intent(inout) :: rni_k
+     real, dimension(cat, kts:kte), intent(inout) :: rnf_k
 
     real :: qrpre1d                 !.. Rain precipitation accumulation (mm)
     real, dimension(cat) :: qipre1d !.. Ice liquid-equivalent precipitation accumulation (mm)
@@ -677,6 +783,12 @@ contains
     real :: nmult(cat)  !.. Ice number multiplication rate (# kg^-1 s^-1)
     real :: mbiggr !.. Biggs freezing (kg kg^-1 s^-1)
     real :: nbiggr !.. Biggs number freezing (# kg^-1 s^-1)
+  !MY REAL VARS
+    real :: iwci_cc(cat)
+    real :: iwcf_cc(cat) 
+    real :: vi_cc(cat) 
+    real :: vf_cc(cat)  
+    real :: rnf_cc(cat) 
 
   !--------------------------------------------------------------------------------------------------------------!
   !--------------------------------------------------------------------------------------------------------------!
@@ -822,6 +934,20 @@ contains
              qipre1d(cc)=0.
              effi(cc,k)=0.
              icetype1d(cc,k)=0.
+             vap_growth(cc,k)     = 0. !my vars!   
+             rime_growth(cc,k)    = 0.    
+             melt(cc,k)           = 0.   
+             nuc(cc,k)            = 0.      
+             ice_rain(cc,k)       = 0.
+             agg(cc,k)            = 0.      
+             sed_equation(cc,k)   = 0.  
+             rime_density(cc,k)   = 0.
+             iwci_k(cc,k)   = 0.             
+             iwcf_k(cc,k)   = 0.
+             vi_k(cc,k)     = 0.
+             vf_k(cc,k)     = 0.
+             rni_k(cc,k)    = 0.
+             rnf_k(cc,k)    = 0.  
           enddo
           dbz1d(k)=-35.
           qrpre1d=0.
@@ -2724,6 +2850,21 @@ contains
           qrpre1d=0.
 
        endif  !.. If domicro
+       do cc = 1, CAT !!           MY VARIABLES!
+           vap_growth(cc,k)   = prd(cc)
+           rime_growth(cc,k)  = prdr(cc)
+           melt(cc,k)         = qmlt(cc)
+           nuc(cc,k)          = totalnuc(cc)
+           ice_rain(cc,k)     = dQIfzri(cc)
+           agg(cc,k)          = qagg(cc)       
+           rime_density(cc,k) = rhorimeout(cc)
+           iwci_k(cc,k)      = iwci_cc(cc)
+           iwcf_k(cc,k)      = iwcf_cc(cc)
+           vi_k(cc,k)        = vi_cc(cc)
+           vf_k(cc,k)        = vf_cc(cc)
+           rni_k(cc,k)       = rni(cc)
+           rnf_k(cc,k)       = rnf_cc(cc)
+       enddo
     enddo     !.. do k = kts, kte
 
   !--------------------------------------------------------------------------------------------------------------!
@@ -2802,6 +2943,7 @@ contains
                 ni(cc,k) = ni(cc,k)+falltndni(cc)*dt/nstep
                 ai(cc,k) = ai(cc,k)+falltndai(cc)*dt/nstep
                 ci(cc,k) = ci(cc,k)+falltndci(cc)*dt/nstep
+                sed_equation(cc,k) = falltndqi(cc)*dt/nstep   !MY VARIABLE
 
   !.. GET PRECIPITATION AND SNOWFALL ACCUMULATION DURING THE TIME STEP
   !.. FACTOR OF 1000 CONVERTS FROM M TO MM, BUT DIVISION BY DENSITY
@@ -2958,7 +3100,6 @@ contains
        endif
 
     enddo
-
   end subroutine me_ishmael
 
   !--------------------------------------------------------------------------------------------------------------!

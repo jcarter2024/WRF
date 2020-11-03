@@ -3649,6 +3649,51 @@ BENCH_START(micro_driver_tim)
       &        ,KTS=k_start, KTE=min(k_end,kde-1)                         &
       &        ,NUM_TILES=grid%num_tiles                                  &
       &        ,NAER=grid%naer                                            &
+!====================== MY MORRISON VARIABLES
+      &        ,qg3dten=grid%qg3dten                                      &
+      &        ,pracg3d=grid%pracg3d                                          &       
+      &        ,psacwg3d=grid%psacwg3d                                        &
+      &        ,pgsacw3d=grid%pgsacw3d                                        &
+      &        ,pgracs3d=grid%pgracs3d                                        &
+      &        ,prdg3d=grid%prdg3d                                            &
+      &        ,eprdg3d=grid%eprdg3d                                          &
+      &        ,mnuccr3d=grid%mnuccr3d                                        &
+      &        ,piacr3d=grid%piacr3d                                          &
+      &        ,praci3d=grid%praci3d                                          &
+      &        ,psacr3d=grid%psacr3d                                          &
+      &        ,pgmlt3d=grid%pgmlt3d                                          &
+      &        ,evpmg3d=grid%evpmg3d                                          &
+      &        ,qgsten3d=grid%qgsten3d                                        &
+!====================== MY ISHMAEL VARIABLES
+      &        ,ish_vap_growth1=grid%ish_vap_growth1                            &
+      &        ,ish_vap_growth2=grid%ish_vap_growth2                            &
+      &        ,ish_rime_growth1=grid%ish_rime_growth1                          &
+      &        ,ish_rime_growth2=grid%ish_rime_growth2                          &
+      &        ,ish_melt1=grid%ish_melt1                                        &
+      &        ,ish_melt2=grid%ish_melt2                                        &       
+      &        ,ish_nuc1=grid%ish_nuc1                                          &
+      &        ,ish_nuc2=grid%ish_nuc2                                          &  
+      &        ,ish_ice_rain1=grid%ish_ice_rain1                                &
+      &        ,ish_ice_rain2=grid%ish_ice_rain2                                &       
+      &        ,ish_agg1=grid%ish_agg1                                          &
+      &        ,ish_agg2=grid%ish_agg2                                          &
+      &        ,ish_sedimentation1=grid%ish_sedimentation1                      &       
+      &        ,ish_sedimentation2=grid%ish_sedimentation2                      &
+      &        ,ish_rime_density1=grid%ish_rime_density1                        &
+      &        ,ish_rime_density2=grid%ish_rime_density2                        &       
+!====================== MY temp prd1 VARIABLES
+      &        ,ish_iwci1=grid%ish_iwci1                           &
+      &        ,ish_iwci2=grid%ish_iwci2                           &
+      &        ,ish_iwcf1=grid%ish_iwcf1                           &
+      &        ,ish_iwcf2=grid%ish_iwcf2                           &
+      &        ,ish_vi1=grid%ish_vi1                               &
+      &        ,ish_vi2=grid%ish_vi2                               &
+      &        ,ish_vf1=grid%ish_vf1                               &
+      &        ,ish_vf2=grid%ish_vf2                               &
+      &        ,ish_rni1=grid%ish_rni1                             &
+      &        ,ish_rni2=grid%ish_rni2                             &
+      &        ,ish_rnf1=grid%ish_rnf1                             &
+      &        ,ish_rnf2=grid%ish_rnf2                             &
 !======================
       ! Variables required for CAMMGMP Scheme
       &        ,DLF=grid%dlf,DLF2=grid%dlf2,T_PHY=grid%t_phy,P_HYD=grid%p_hyd  &
