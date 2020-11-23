@@ -561,7 +561,9 @@ END SUBROUTINE MORR_TWO_MOMENT_INIT
 SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                          &
                 qg3dten, pracg3d, psacwg3d, pgsacw3d, pgracs3d,   & !MY MORRISON VARS
                 prdg3d, eprdg3d, mnuccr3d, piacr3d, praci3d,      &
-                psacr3d, pgmlt3d, evpmg3d, qgsten3d,              &                                 
+                psacr3d, pgmlt3d, evpmg3d, qgsten3d,              &
+                fc_3d, fg_3d, fr_3d, fi_3d, fs_3d, psacws3d,      &
+                psacwi3d, pracs3d, piacrs3d, pracis3d,            &                                 
                 TH, QV, QC, QR, QI, QS, QG, NI, NS, NR, NG,       &
                 RHO, PII, P, DT_IN, DZ, HT, W,          &
                 RAINNC, RAINNCV, SR,                    &
@@ -655,7 +657,8 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                          &
 !================= MY MORRISON VARIABLES
    REAL, DIMENSION(ims:ime, kms:kme, jms:jme), INTENT(INOUT):: &
                           qg3dten, pracg3d, psacwg3d, pgsacw3d, pgracs3d, prdg3d, eprdg3d, mnuccr3d, &
-                          piacr3d, praci3d, psacr3d, pgmlt3d, evpmg3d, qgsten3d 
+                          piacr3d, praci3d, psacr3d, pgmlt3d, evpmg3d, qgsten3d, fc_3d, fg_3d, &
+                          fr_3d, fi_3d, fs_3d, psacws3d, psacwi3d, pracs3d, piacrs3d, pracis3d  
 
 !jdf                      qndrop ! hm added, wrf-chem
    REAL, DIMENSION(ims:ime, kms:kme, jms:jme), optional,INTENT(INOUT):: qndrop
@@ -698,6 +701,8 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                          &
                             QG_TEND1D, NG_TEND1D, QG1D, NG1D, EFFG1D, &
                            PRACG, PSACWG, PGSACW, PGRACS, PRDG, EPRDG, MNUCCR, &
                            PIACR, PRACI, PSACR, PGMLT, EVPMG, &
+ ! ADD MY FALL SPEED AND SNOW VARIABLES
+                           FC, FG, FR, FI, FS,PSACWS,PSACWI,PRACS,PIACRS,PRACIS, &
 
 ! ADD SEDIMENTATION TENDENCIES (UNITS OF KG/KG/S)
                             QGSTEN,QRSTEN, QISTEN, QNISTEN, QCSTEN, &
@@ -803,7 +808,16 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                          &
           PGMLT(k)=0.
           EVPMG(k)=0.
           QGSTEN(k)=0.
-
+          FC(k)=0.
+          FG(k)=0.
+          FR(k)=0.
+          FI(k)=0.
+          FS(k)=0.
+          PSACWS(k)=0.
+          PSACWI(k)=0.
+          PRACS(k)=0.
+          PIACRS(k)=0.
+          PRACIS(k)=0.
           T1D(k)        = T(i,k,j)
           QV1D(k)       = QV(i,k,j)
           P1D(k)        = P(i,k,j)
@@ -848,7 +862,8 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                          &
 !ADD MY VARIABLES THAT ARENT ALREADY INCLUDED
                                   PRACG, PSACWG, PGSACW, PGRACS,                         &
                                   PRDG, EPRDG, MNUCCR, PIACR, PRACI,                     &
-                                  PSACR, PGMLT, EVPMG                                   & 
+                                  PSACR, PGMLT, EVPMG,FC,FG,FR,FI,FS,PSACWS,PSACWI,      &
+                                  PRACS,PIACRS,PRACIS                                    & 
 #if (WRF_CHEM == 1)
                                   ,rainprod1d, evapprod1d                                 & !wrf-chem
 #endif
@@ -897,6 +912,16 @@ SUBROUTINE MP_MORR_TWO_MOMENT(ITIMESTEP,                          &
           pgmlt3d(i,k,j)     = PGMLT(k)
           evpmg3d(i,k,j)     = EVPMG(k)
           qgsten3d(i,k,j)    = QGSTEN(k)
+          fc_3d(i,k,j)       = FC(k)
+          fg_3d(i,k,j)       = FG(k)
+          fr_3d(i,k,j)       = FR(k)
+          fi_3d(i,k,j)       = FI(k)
+          fs_3d(i,k,j)       = FS(k)
+          psacws3d(i,k,j)    = PSACWS(k)
+          psacwi3d(i,k,j)    = PSACWI(k)
+          pracs3d(i,k,j)     = PRACS(k)
+          piacrs3d(i,k,j)    = PIACRS(k)
+          pracis3d(i,k,j)    = PRACIS(k)
 ! wrf-chem
           IF (flag_qndrop .AND. PRESENT( qndrop )) THEN
              qndrop(i,k,j) = nc1d(k)
@@ -969,7 +994,8 @@ END SUBROUTINE MP_MORR_TWO_MOMENT
                         c2prec,CSED,ISED,SSED,GSED,RSED,                         &  ! hm added,wrf-chem
                         PRACG,PSACWG,PGSACW,PGRACS,                              & 
                         PRDG,EPRDG,MNUCCR,PIACR,PRACI,                           & !MY VARS
-                        PSACR,PGMLT,EVPMG                                        &
+                        PSACR,PGMLT,EVPMG,FC,FG,FR,FI,FS,PSACWS,PSACWI,PRACS,    &
+                        PIACRS,PRACIS                                            &
 #if (WRF_CHEM == 1)
         ,rainprod, evapprod &
 #endif

@@ -3664,6 +3664,16 @@ BENCH_START(micro_driver_tim)
       &        ,pgmlt3d=grid%pgmlt3d                                          &
       &        ,evpmg3d=grid%evpmg3d                                          &
       &        ,qgsten3d=grid%qgsten3d                                        &
+      &        ,fc_3d=grid%fc_3d                                              &
+      &        ,fg_3d=grid%fg_3d                                              &
+      &        ,fr_3d=grid%fr_3d                                              &
+      &        ,fi_3d=grid%fi_3d                                              &
+      &        ,fs_3d=grid%fs_3d                                              &
+      &        ,psacws3d=grid%psacws3d                                        &
+      &        ,psacwi3d=grid%psacwi3d                                        &
+      &        ,pracs3d=grid%pracs3d                                          &
+      &        ,piacrs3d=grid%piacrs3d                                        &
+      &        ,pracis3d=grid%pracis3d                                        &
 !====================== MY ISHMAEL VARIABLES
       &        ,ish_vap_growth1=grid%ish_vap_growth1                            &
       &        ,ish_vap_growth2=grid%ish_vap_growth2                            &
@@ -3694,7 +3704,26 @@ BENCH_START(micro_driver_tim)
       &        ,ish_rni2=grid%ish_rni2                             &
       &        ,ish_rnf1=grid%ish_rnf1                             &
       &        ,ish_rnf2=grid%ish_rnf2                             &
-!======================
+!====================== MY RIMING VARIABLES
+      &        ,ish_rimesum1=grid%ish_rimesum1                     &
+      &        ,ish_rimesum2=grid%ish_rimesum2                     &
+      &        ,ish_rimesumr1=grid%ish_rimesumr1                   &
+      &        ,ish_rimesumr2=grid%ish_rimesumr2                   &
+      &        ,ish_vfr1=grid%ish_vfr1                             &
+      &        ,ish_vfr2=grid%ish_vfr2                             &
+      &        ,ish_gdenavg1=grid%ish_gdenavg1                     &
+      &        ,ish_gdenavg2=grid%ish_gdenavg2                     &
+      &        ,ish_gdenavgr1=grid%ish_gdenavgr1                   &
+      &        ,ish_gdenavgr2=grid%ish_gdenavgr2                   &
+      &        ,ish_rhorimeout1=grid%ish_rhorimeout1               &
+      &        ,ish_rhorimeout2=grid%ish_rhorimeout2               &
+      &        ,ish_iwcfr1=grid%ish_iwcfr1                     &
+      &        ,ish_iwcfr2=grid%ish_iwcfr2                     &
+      &        ,ish_rhoair=grid%ish_rhoair                   &
+      &        ,ish_ratio1_a=grid%ish_ratio1_a                   &
+      &        ,ish_ratio2_a=grid%ish_ratio2_a                   &
+      &        ,ish_ratio1_b=grid%ish_ratio1_b                   &
+      &        ,ish_ratio2_b=grid%ish_ratio2_b                   &
       ! Variables required for CAMMGMP Scheme
       &        ,DLF=grid%dlf,DLF2=grid%dlf2,T_PHY=grid%t_phy,P_HYD=grid%p_hyd  &
       &        ,P8W_HYD=grid%p_hyd_w,TKE_PBL=grid%tke_pbl                 &

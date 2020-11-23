@@ -224,7 +224,13 @@ contains
        ish_rime_density1, ish_rime_density2,             &
        ish_iwci1, ish_iwci2, ish_iwcf1, ish_iwcf2,       & 
        ish_vi1, ish_vi2, ish_vf1, ish_vf2, ish_rni1,     &
-       ish_rni2, ish_rnf1, ish_rnf2,                     &
+       ish_rni2, ish_rnf1, ish_rnf2, ish_rimesum1,       &
+       ish_rimesum2, ish_rimesumr1, ish_rimesumr2,       &
+       ish_vfr1, ish_vfr2, ish_gdenavg1, ish_gdenavg2,   &
+       ish_gdenavgr1, ish_gdenavgr2, ish_rhorimeout1,    &
+       ish_rhorimeout2, ish_iwcfr1, ish_iwcfr2,          &
+       ish_rhoair, ish_ratio1_a, ish_ratio2_a, &
+       ish_ratio1_b, ish_ratio2_b,                       &
        P, DZ,                                            &  
        TH, QV, QC, QR, NR, QI1, NI1, AI1, CI1,           &
        QI2, NI2, AI2, CI2,                               &
@@ -327,7 +333,13 @@ contains
        ish_rime_density1, ish_rime_density2,             &
        ish_iwci1, ish_iwci2, ish_iwcf1, ish_iwcf2,       &
        ish_vi1, ish_vi2, ish_vf1, ish_vf2, ish_rni1,     &
-       ish_rni2, ish_rnf1, ish_rnf2                      
+       ish_rni2, ish_rnf1, ish_rnf2, ish_rimesum1,       &
+       ish_rimesum2, ish_rimesumr1, ish_rimesumr2,       &
+       ish_vfr1, ish_vfr2, ish_gdenavg1, ish_gdenavg2,   &
+       ish_gdenavgr1, ish_gdenavgr2, ish_rhorimeout1,    &
+       ish_rhorimeout2, ish_iwcfr1, ish_iwcfr2,          &
+       ish_rhoair, ish_ratio1_a, ish_ratio2_a,  &
+       ish_ratio1_b, ish_ratio2_b                                            
 
   !.. 2D variables
     real, dimension(ims:ime, jms:jme), intent(inout) ::              &
@@ -347,7 +359,7 @@ contains
   !.. These variables go in and out of newmicro
     real, dimension(kts:kte) ::                    &  
          th1d, qv1d, qc1d, qr1d, nr1d, p1d, dz1d,  &
-         effc1d, effi1d, dbz1d
+         effc1d, effi1d, dbz1d, rhoair
 
     real, dimension(cat, kts:kte) ::               &  
          qi1d, ni1d, ai1d, ci1d,                   &
@@ -358,7 +370,9 @@ contains
         agg, sed_equation 
 
     real, dimension(cat, kts:kte) ::                     &
-       rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k
+       rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k, & 
+       rimesum_k, rimesumr_k, vfr_k, gdenavg_k, gdenavgr_k, &
+       rhorimeout_k, iwcfr_k, ratio_a_k, ratio_b_k
              
   !.. Precipitation
     real :: qrpre1d
@@ -448,7 +462,25 @@ contains
              rni_k(ICE1,k)        = 0.
              rni_k(ICE2,k)        = 0.
              rnf_k(ICE1,k)        = 0.
-             rnf_k(ICE2,k)        = 0. 
+             rnf_k(ICE2,k)        = 0.
+             rimesum_k(ICE1,k)    =0.
+             rimesum_k(ICE2,k)    =0.
+             rimesumr_k(ICE1,k)    =0.
+             rimesumr_k(ICE2,k)    =0.
+             vfr_k(ICE1,k)         =0.
+             vfr_k(ICE2,k)         =0.
+             gdenavg_k(ICE1,k)     =0.
+             gdenavg_k(ICE2,k)     =0.
+             gdenavgr_k(ICE1,k)     =0.
+             gdenavgr_k(ICE2,k)     =0.
+             rhorimeout_k(ICE1,k)         =0.
+             rhorimeout_k(ICE2,k)         =0.
+             iwcfr_k(ICE1,k)     =0.
+             iwcfr_k(ICE2,k)     =0.
+             ratio_a_k(ICE1,k)     =0.
+             ratio_a_k(ICE2,k)     =0.
+             ratio_b_k(ICE1,k)     =0.
+             ratio_b_k(ICE2,k)     =0. 
           enddo !.. (vertical k-loop)
 
   !.. Call me Ishmael.
@@ -457,7 +489,9 @@ contains
                CAT, ICE1, ICE2, ICE3, effc1d, effi1d, dbz1d, icetype1d,  &
                vmi1d, di1d, rhopo1d, phii1d, qrpre1d, qipre1d, vap_growth, &
                rime_growth, melt, nuc, ice_rain, agg, sed_equation, rime_density, &
-               iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k)
+               iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k, rimesum_k, rimesumr_k,&
+               vfr_k, gdenavg_k, gdenavgr_k, rhorimeout_k, iwcfr_k, &
+               ratio_a_k, ratio_b_k, rhoair)
 
   !.. Send the 1D columns from newmicro back to WRF
           do k=kts,kte !.. k loop (vertical)
@@ -528,6 +562,25 @@ contains
              ish_rni2(i,k,j)          =rni_k(ICE2,k)
              ish_rnf1(i,k,j)          =rnf_k(ICE1,k)
              ish_rnf2(i,k,j)          =rnf_k(ICE2,k)
+             ish_rimesum1(i,k,j)      =rimesum_k(ICE1,k)
+             ish_rimesum2(i,k,j)      =rimesum_k(ICE2,k)
+             ish_rimesumr1(i,k,j)     =rimesumr_k(ICE1,k)
+             ish_rimesumr2(i,k,j)     =rimesumr_k(ICE2,k)
+             ish_vfr1(i,k,j)          =vfr_k(ICE1,k)
+             ish_vfr2(i,k,j)          =vfr_k(ICE2,k)
+             ish_gdenavg1(i,k,j)      =gdenavg_k(ICE1,k)
+             ish_gdenavg2(i,k,j)      =gdenavg_k(ICE2,k)
+             ish_gdenavgr1(i,k,j)     =gdenavgr_k(ICE1,k)
+             ish_gdenavgr2(i,k,j)     =gdenavgr_k(ICE2,k)
+             ish_rhorimeout1(i,k,j)     =rhorimeout_k(ICE1,k)
+             ish_rhorimeout2(i,k,j)     =rhorimeout_k(ICE2,k)
+             ish_iwcfr1(i,k,j)          =iwcfr_k(ICE1,k)
+             ish_iwcfr2(i,k,j)          =iwcfr_k(ICE2,k)
+             ish_rhoair(i,k,j)      =rhoair(k)
+             ish_ratio1_a(i,k,j)     =ratio_a_k(ICE1,k)
+             ish_ratio2_a(i,k,j)     =ratio_a_k(ICE2,k)
+             ish_ratio1_b(i,k,j)     =ratio_b_k(ICE1,k)
+             ish_ratio2_b(i,k,j)     =ratio_b_k(ICE2,k)
           enddo
 
   !.. Accumulated precipitation and precipitation rates
@@ -551,7 +604,9 @@ contains
        theta, qv, qc, qr, nr, qi, ni, ai, ci, CAT, ICE1, ICE2, ICE3,    &
        effc1d, effi1d, dbz1d, icetype1d, vmi1d, di1d, rhopo1d, phii1d,  &
        qrpre1d, qipre1d, vap_growth,rime_growth, melt, nuc, ice_rain,   &
-       agg, sed_equation, rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k)
+       agg, sed_equation, rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k,&
+       rnf_k, rimesum_k, rimesumr_k, vfr_k, gdenavg_k, gdenavgr_k, rhorimeout_k,&
+       iwcfr_k, ratio_a_k, ratio_b_k,rhoair)
 
     implicit none
     
@@ -604,6 +659,15 @@ contains
      real, dimension(cat, kts:kte), intent(inout) :: vf_k
      real, dimension(cat, kts:kte), intent(inout) :: rni_k
      real, dimension(cat, kts:kte), intent(inout) :: rnf_k
+     real, dimension(cat, kts:kte), intent(inout) :: rimesum_k
+     real, dimension(cat, kts:kte), intent(inout) :: rimesumr_k
+     real, dimension(cat, kts:kte), intent(inout) :: vfr_k
+     real, dimension(cat, kts:kte), intent(inout) :: gdenavg_k
+     real, dimension(cat, kts:kte), intent(inout) :: gdenavgr_k
+     real, dimension(cat, kts:kte), intent(inout) :: rhorimeout_k
+     real, dimension(cat, kts:kte), intent(inout) :: iwcfr_k
+     real, dimension(cat, kts:kte), intent(inout) :: ratio_a_k
+     real, dimension(cat, kts:kte), intent(inout) :: ratio_b_k
 
     real :: qrpre1d                 !.. Rain precipitation accumulation (mm)
     real, dimension(cat) :: qipre1d !.. Ice liquid-equivalent precipitation accumulation (mm)
@@ -788,7 +852,13 @@ contains
     real :: iwcf_cc(cat) 
     real :: vi_cc(cat) 
     real :: vf_cc(cat)  
-    real :: rnf_cc(cat) 
+    real :: vf           ! For vaporgrow    
+    real :: rnf_cc(cat)
+    real :: vfr_cc(cat)
+    real :: rhorimeout_cc(cat)
+    real :: iwcfr_cc(cat)           ! For vaporgrow    
+    real :: ratio_a_cc(cat)
+    real :: ratio_b_cc(cat)
 
   !--------------------------------------------------------------------------------------------------------------!
   !--------------------------------------------------------------------------------------------------------------!
@@ -947,7 +1017,27 @@ contains
              vi_k(cc,k)     = 0.
              vf_k(cc,k)     = 0.
              rni_k(cc,k)    = 0.
-             rnf_k(cc,k)    = 0.  
+             rnf_k(cc,k)    = 0.
+             rimesum_k(cc,k)     = 0.
+             rimesumr_k(cc,k)    = 0.
+             vfr_k(cc,k)         = 0.
+             gdenavg_k(cc,k)     = 0.
+             gdenavgr_k(cc,k)    = 0.
+             rhorimeout_k(cc,k)    = 0.
+             iwcfr_k(cc,k)         = 0.
+             ratio_a_k(cc,k)    = 0.  
+             ratio_b_k(cc,k)    = 0.
+!and my variables 
+             iwci_cc(cc) = 0.
+             iwcf_cc(cc)   =0.
+             vi_cc(cc)   =0.
+             vf_cc(cc) = 0.
+             rnf_cc(cc) = 0.
+             vfr_cc(cc) = 0.
+             rhorimeout_cc(cc)=0.
+             iwcfr_cc(cc) = 0.
+             ratio_a_cc(cc) = 0.
+             ratio_b_cc(cc) = 0.          
           enddo
           dbz1d(k)=-35.
           qrpre1d=0.
@@ -1247,6 +1337,7 @@ contains
 
                 vi = fourthirdspi*rni(cc)**3*gamma_tab(gi)*i_gammnu     
                 iwci = ni(cc,k)*rhobar(cc)*vi*rhoair(k)
+                iwci_cc(cc)=iwci  ! My variable
                 nim3dum=ni(cc,k)*rhoair(k)
                 
   !.. Total riming rate (the heating goes into vapor growth)
@@ -1262,7 +1353,12 @@ contains
                      dv, kt, ao, nsch, npr, gammnu, i_gammnu, fourthirdspi, svpi, xxls, xxlv, xxlf,      &
                      capgam, vtrni1(cc,k), vtrmi1(cc,k), vtrzi1(cc,k), anf, cnf, rnf,  iwcf, fv(cc),     &
                      fh(cc), rhobar(cc), deltastr(cc),rhodepout(cc),dsdepout(cc))
-
+  !..MY VARIABLES TO BE WRITTEN OUT AFTER CALL TO VAPORGROW
+                iwcf_cc(cc)=iwcf
+                rnf_cc(cc)=rnf
+                vi_cc(cc)=vi
+                vf_cc(cc)=vf
+                rnf_cc(cc)=rnf
   !.. Vapor growth mass growth and axes rates
                 prd(cc)=(iwcf-iwci)*i_rhoair(k)*i_dt 
                 prd(cc)=max(prd(cc),-qi(cc,k)*i_dt)
@@ -1400,7 +1496,9 @@ contains
                 vfr = fourthirdspi*rnfr**3*gamma_tab(gi)*i_gammnu
                 vfr = max(vfr,vi)
                 rnfr= max(rnfr,rni(cc))
-                
+               
+  !..MY VARIABLES FOR RIMING
+                vfr_cc(cc)=vfr 
   !.. Determine the fraction of rime mass from cloud versus small rain drops
   !.. Update the ice density and iwc
                 if(rimetotal(cc).gt.0.and.vfr.gt.vi) then
@@ -1411,6 +1509,7 @@ contains
                    rhobarrime = rhobar(cc)
                    rhorimeout(cc) = (rhobar(cc)*(vi/vfr))+(gdentotal*(1.-(vi/vfr)))
                    rhorimeout(cc) = min(rhorimeout(cc),RHOI)
+                   rhorimeout_cc(cc) = rhorimeout(cc)
                    iwcfr = rhorimeout(cc) * vfr * nim3dum
                    rhorimeout(cc) = gdentotal
                    rhorimeout(cc) = min(rhorimeout(cc),RHOI)
@@ -1418,7 +1517,7 @@ contains
                    iwcfr= iwci
                    rnfr = rni(cc)
                 endif
-             
+                iwcfr_cc(cc) = iwcfr 
   !.. For dry growth the drops freeze on contace and one axis (the axis perpendicular to the 
   !.. fall direction) grows
                 if(dry_growth(cc)) then
@@ -1779,6 +1878,7 @@ contains
           source=qc(k)
           if(sink.gt.source.and.qc(k).gt.QSMALL) then
              ratio = source/sink
+             ratio_a_cc(cc) = ratio
              prc = prc*ratio
              pra = pra*ratio
              mim = mim*ratio
@@ -1806,6 +1906,7 @@ contains
           enddo
           if(sink.gt.source.and.qr(k).gt.QSMALL) then
              ratio= source/sink
+             ratio_b_cc(cc) = ratio
              do cc = 1, cat
                 prdr(cc) = prdr(cc)*ratio
                 ardr(cc) = ardr(cc)*ratio
@@ -2864,6 +2965,15 @@ contains
            vf_k(cc,k)        = vf_cc(cc)
            rni_k(cc,k)       = rni(cc)
            rnf_k(cc,k)       = rnf_cc(cc)
+           rimesum_k(cc,k)        = rimesum(cc)
+           rimesumr_k(cc,k)       = rimesumr(cc)
+           vfr_k(cc,k)            = vfr_cc(cc)
+           gdenavg_k(cc,k)        = gdenavg(cc)
+           gdenavgr_k(cc,k)       = gdenavgr(cc)
+           rhorimeout_k(cc,k)       = rhorimeout_cc(cc)
+           iwcfr_k(cc,k)            = iwcfr_cc(cc)
+           ratio_a_k(cc,k)       = ratio_a_cc(cc)
+           ratio_b_k(cc,k)       = ratio_b_cc(cc)
        enddo
     enddo     !.. do k = kts, kte
 

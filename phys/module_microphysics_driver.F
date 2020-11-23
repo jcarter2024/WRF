@@ -38,6 +38,16 @@ SUBROUTINE microphysics_driver(                                          &
                       ,pgmlt3d                                             &
                       ,evpmg3d                                             &
                       ,qgsten3d                                            &
+                      ,fc_3d                                               &
+                      ,fg_3d                                               &
+                      ,fr_3d                                               &
+                      ,fi_3d                                               &
+                      ,fs_3d                                               &
+                      ,psacws3d                                            &
+                      ,psacwi3d                                            &
+                      ,pracs3d                                             &
+                      ,piacrs3d                                            &
+                      ,pracis3d                                            &
 !=====================
                       ! MY ISHMAEL VARIABLES
                       ,ish_vap_growth1                                      &
@@ -69,6 +79,26 @@ SUBROUTINE microphysics_driver(                                          &
                       ,ish_rni2                                            &
                       ,ish_rnf1                                            &    
                       ,ish_rnf2                                            &
+!======================
+                      ,ish_rimesum1                                        &
+                      ,ish_rimesum2                                        &
+                      ,ish_rimesumr1                                       &
+                      ,ish_rimesumr2                                       &
+                      ,ish_vfr1                                            &
+                      ,ish_vfr2                                            &
+                      ,ish_gdenavg1                                        &
+                      ,ish_gdenavg2                                        &
+                      ,ish_gdenavgr1                                       &
+                      ,ish_gdenavgr2                                       &
+                      ,ish_rhorimeout1                                            &
+                      ,ish_rhorimeout2                                            &
+                      ,ish_iwcfr1                                        &
+                      ,ish_iwcfr2                                        &
+                      ,ish_rhoair                                       &         
+                      ,ish_ratio1_a                                       &
+                      ,ish_ratio2_a                                       &
+                      ,ish_ratio1_b                                       &
+                      ,ish_ratio2_b                                       &
 !======================
                       !Variables required for CAMMGMP Scheme
                       ,dlf,dlf2,t_phy,p_hyd,p8w_hyd,tke_pbl,z_at_w,qfx   &
@@ -468,6 +498,16 @@ SUBROUTINE microphysics_driver(                                          &
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: pgmlt3d
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: evpmg3d
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: qgsten3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: fc_3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: fg_3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: fr_3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: fi_3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: fs_3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: psacws3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: psacwi3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: pracs3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: piacrs3d
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: pracis3d
 
 !My ISHMAEL VARIABLES  ==========================================================
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vap_growth1
@@ -499,6 +539,26 @@ SUBROUTINE microphysics_driver(                                          &
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rni2
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rnf1
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rnf2
+!
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rimesum1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rimesum2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rimesumr1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rimesumr2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vfr1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_vfr2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_gdenavg1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_gdenavg2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_gdenavgr1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_gdenavgr2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rhorimeout1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rhorimeout2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_iwcfr1  
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_iwcfr2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_rhoair
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ratio1_a
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ratio2_a
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ratio1_b
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ratio2_b
 ! ==========================================================
    REAL, DIMENSION( ims:ime , kms:kme , jms:jme ),                    &
          INTENT(INOUT) ::                                         th
@@ -1307,6 +1367,25 @@ REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                        &
              ish_rni2=ish_rni2,                          &  !*
              ish_rnf1=ish_rnf1,                          &  !* 
              ish_rnf2=ish_rnf2,                          &  !*
+             ish_rimesum1=ish_rimesum1,                        &  !* 
+             ish_rimesum2=ish_rimesum2,                        &  !*
+             ish_rimesumr1=ish_rimesumr1,                            &  !*
+             ish_rimesumr2=ish_rimesumr2,                            &  !* 
+             ish_vfr1=ish_vfr1,                            &  !* 
+             ish_vfr2=ish_vfr2,                            &  !*
+             ish_gdenavg1=ish_gdenavg1,                          &  !* 
+             ish_gdenavg2=ish_gdenavg2,                          &  !*
+             ish_gdenavgr1=ish_gdenavgr1,                          &  !* 
+             ish_gdenavgr2=ish_gdenavgr2,                          &  !*
+             ish_rhorimeout1=ish_rhorimeout1,                            &  !* 
+             ish_rhorimeout2=ish_rhorimeout2,                            &  !*
+             ish_iwcfr1=ish_iwcfr1,                          &  !* 
+             ish_iwcfr2=ish_iwcfr2,                          &  !*
+             ish_rhoair=ish_rhoair,                          &  !*  
+             ish_ratio1_a=ish_ratio1_a,                          &  !*             
+             ish_ratio2_a=ish_ratio2_a,                          &  !*
+             ish_ratio1_b=ish_ratio1_b,                          &  !*             
+             ish_ratio2_b=ish_ratio2_b,                          &  !*
              P=p,                                &  !*                                                                         
              DZ=dz8w,                            &  !* !
              TH=th,                              &  !*                                                                         
@@ -1384,6 +1463,16 @@ REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                        &
                      pgmlt3d=pgmlt3d,                        &  !* My Variables
                      evpmg3d=evpmg3d,                        &  !* My Variables
                      qgsten3d=qgsten3d,                      &  !* My Variables
+                     fc_3d=fc_3d,                            &  !* My Variables
+                     fg_3d=fg_3d,                            &  !* My Variables
+                     fr_3d=fr_3d,                            &  !* My Variables
+                     fi_3d=fi_3d,                            &  !* My Variables
+                     fs_3d=fs_3d,                            &  !* My Variables
+                     psacws3d=psacws3d,                        &  !* My Variables
+                     psacwi3d=psacwi3d,                        &  !* My Variables
+                     pracs3d=pracs3d,                        &  !* My Variables
+                     piacrs3d=piacrs3d,                        &  !* My Variables
+                     pracis3d=pracis3d,                      &  !* My Variables
                      TH=th,                              &  !*
                      QV=qv_curr,                         &  !*
                      QC=qc_curr,                         &  !*
