@@ -571,16 +571,16 @@ state    real  ish_rime_density2           ikj      misc        1         -     
 #vars to check prd1
 state    real  ish_iwci1           ikj      misc        1         -      rh01du   "iwci1"                "Local var iwci ICE1"              "kg kg-1 s-1"
 state    real  ish_iwci2           ikj      misc        1         -      rh01du   "iwci2"                "Local var iwci ICE2"              "kg kg-1 s-1"
-state    real  ish_iwcf1           ikj      misc        1         -      rh01du   "iwcf1"                "Local var iwcf ICE1"              "kg kg-1 s-1"
-state    real  ish_iwcf2           ikj      misc        1         -      rh01du   "iwcf2"                "Local var iwcf ICE2"              "kg kg-1 s-1"
+state    real  ish_iwcf1           ikj      misc        1         -      r01du   "iwcf1"                "Local var iwcf ICE1"              "kg kg-1 s-1"
+state    real  ish_iwcf2           ikj      misc        1         -      r01du   "iwcf2"                "Local var iwcf ICE2"              "kg kg-1 s-1"
 state    real  ish_vi1           ikj      misc        1         -      rh01du   "vi1"                "Local var vi ICE1"              "kg kg-1 s-1"
 state    real  ish_vi2           ikj      misc        1         -      rh01du   "vi2"                "Local var vi ICE2"              "kg kg-1 s-1"
 state    real  ish_vf1           ikj      misc        1         -      rh01du   "vf1"                "Local var vf ICE1"              "kg kg-1 s-1"
 state    real  ish_vf2           ikj      misc        1         -      rh01du   "vf2"                "Local var vf ICE2"              "kg kg-1 s-1"
-state    real  ish_rni1           ikj      misc        1         -      rh01du   "rni1"                "Local var rni ICE1"              "kg kg-1 s-1"
-state    real  ish_rni2           ikj      misc        1         -      rh01du   "rni2"                "Local var rni ICE2"              "kg kg-1 s-1"
-state    real  ish_rnf1           ikj      misc        1         -      rh01du   "rnf1"                "Local var rnf ICE1"              "kg kg-1 s-1"
-state    real  ish_rnf2           ikj      misc        1         -      rh01du   "rnf2"                "Local var rnf ICE2"              "kg kg-1 s-1"
+state    real  ish_rni1           ikj      misc        1         -      r01du   "rni1"                "Local var rni ICE1"              "kg kg-1 s-1"
+state    real  ish_rni2           ikj      misc        1         -      r01du   "rni2"                "Local var rni ICE2"              "kg kg-1 s-1"
+state    real  ish_rnf1           ikj      misc        1         -      r01du   "rnf1"                "Local var rnf ICE1"              "kg kg-1 s-1"
+state    real  ish_rnf2           ikj      misc        1         -      r01du   "rnf2"                "Local var rnf ICE2"              "kg kg-1 s-1"
 #vars to check riming
 state    real  ish_rimesum1           ikj      misc        1         -      rh01du   "rimesum1"                "Ice-cloud rime mass rate"              "kg m^-3 s^-1"
 state    real  ish_rimesum2           ikj      misc        1         -      rh01du   "rimesum2"                "Ice-cloud rime mass rate"              "kg m^-3 s^-1"
@@ -592,15 +592,19 @@ state    real  ish_gdenavg1           ikj      misc        1         -      rh01
 state    real  ish_gdenavg2           ikj      misc        1         -      rh01du   "gdenavg2"                "Rime density from ice-cloud"              "kg m^-3"
 state    real  ish_gdenavgr1           ikj      misc        1         -      rh01du   "gdenavgr1"                "Rime density from ice-rain"              "kg m^-3"
 state    real  ish_gdenavgr2           ikj      misc        1         -      rh01du   "gdenavgr2"                "Rime density from ice-rain"              "kg m^-3"
-state    real  ish_rhorimeout1           ikj      misc        1         -      rh01du   "rhorimeout1"                "Ice effective density"              "kg m^-3"
-state    real  ish_rhorimeout2           ikj      misc        1         -      rh01du   "rhorimeout2"                "Ice effective density"              "kg m^-3"
+state    real  ish_rhorimeout1           ikj      misc        1         -      r01du   "rhorimeout1"                "Ice effective density"              "kg m^-3"
+state    real  ish_rhorimeout2           ikj      misc        1         -      r01du   "rhorimeout2"                "Ice effective density"              "kg m^-3"
 state    real  ish_iwcfr1           ikj      misc        1         -      rh01du   "iwcfr1"                "Ice water content after riming"              "kg m^-3"
 state    real  ish_iwcfr2           ikj      misc        1         -      rh01du   "iwcfr2"                "Ice water content after riming"              "kg m^-3"
-state    real  ish_rhoair           ikj      misc        1         -      rh01du   "rhoair1"                "air density"              "kg m^-3"
-state    real  ish_ratio1_a           ikj      misc        1         -      rh01du   "rime_ratio1_a"                "ratio used for source/sink in prdr cloud water"              "kg m^-3"
-state    real  ish_ratio2_a           ikj      misc        1         -      rh01du   "rime_ratio2_a"                "ratio used for source/sink in prdr cloud water"              "kg m^-3"
-state    real  ish_ratio1_b           ikj      misc        1         -      rh01du   "rime_ratio1_b"                "ratio used for source/sink in prdr rain water"              "kg m^-3"
-state    real  ish_ratio2_b           ikj      misc        1         -      rh01du   "rime_ratio2_b"                "ratio used for source/sink in prdr rain water"              "kg m^-3"
+state    real  ish_rhoair           ikj      misc        1         -      r01du   "rhoair1"                "air density"              "kg m^-3"
+state    real  ish_ratio1_a           ikj      misc        1         -      r01du   "rime_ratio1_a"                "ratio used for source/sink in prdr cloud water"              "kg m^-3"
+state    real  ish_ratio2_a           ikj      misc        1         -      r01du   "rime_ratio2_a"                "ratio used for source/sink in prdr cloud water"              "kg m^-3"
+state    real  ish_ratio1_b           ikj      misc        1         -      r01du   "rime_ratio1_b"                "ratio used for source/sink in prdr rain water"              "kg m^-3"
+state    real  ish_ratio2_b           ikj      misc        1         -      r01du   "rime_ratio2_b"                "ratio used for source/sink in prdr rain water"              "kg m^-3"
+state    real  ish_prdr_c1           ikj      misc        1         -      rh01du   "prdr_c1"                "Riming mass tendency cloud water component"              "kg kg^-1 s^-1"
+state    real  ish_prdr_c2           ikj      misc        1         -      rh01du   "prdr_c2"                "Riming mass tendency cloud water component"              "kg kg^-1 s^-1"
+state    real  ish_prdr_r1           ikj      misc        1         -      rh01du   "prdr_r1"                "Riming mass tendency rain water component"              "kg kg^-1 s^-1"
+state    real  ish_prdr_r2           ikj      misc        1         -      rh01du   "prdr_r2"                "Riming mass tendency rain water component"              "kg kg^-1 s^-1"
 # Other Scalars
 state   real    -              ikjftb  scalar      1         -     -   -
 state   real    qndrop         ikjftb  scalar      1         -     \
@@ -2849,7 +2853,7 @@ package   p3_1category    mp_physics==50               -             moist:qv,qc
 package   p3_1category_nc mp_physics==51               -             moist:qv,qc,qr,qi;scalar:qnc,qni,qnr,qir,qib;state:re_cloud,re_ice,vmi3d,rhopo3d,di3d,refl_10cm,th_old,qv_old
 package   p3_2category    mp_physics==52               -             moist:qv,qc,qr,qi,qi2;scalar:qnc,qni,qnr,qir,qib,qni2,qir2,qib2;state:re_cloud,re_ice,vmi3d,rhopo3d,di3d,vmi3d_2,rhopo3d_2,di3d_2,refl_10cm,th_old,qv_old
 package   morr_tm_aero    mp_physics==40               -             moist:qv,qc,qr,qi,qs,qg;scalar:qnc,qni,qns,qnr,qng;state:rqrcuten,rqscuten,rqicuten,EFCG,EFIG,EFSG,WACT,CCN1_GS,CCN2_GS,CCN3_GS,CCN4_GS,CCN5_GS,CCN6_GS,CCN7_GS,re_cloud,re_ice,re_snow,mskf_refl_10cm
-package   jensen_ishmael  mp_physics==55               -             moist:qv,qc,qr,qi,qi2,qi3;scalar:qnr,qni,qvoli,qaoli,qni2,qvoli2,qaoli2,qni3,qvoli3,qaoli3;state:re_cloud,re_ice,vmi3d,rhopo3d,di3d,phii3d,itype,vmi3d_2,rhopo3d_2,di3d_2,phii3d_2,itype_2,vmi3d_3,rhopo3d_3,di3d_3,phii3d_3,itype_3,refl_10cm,ish_vap_growth1,ish_vap_growth2,ish_rime_growth1,ish_rime_growth2,ish_melt1,ish_melt2,ish_nuc1,ish_nuc2,ish_ice_rain1,ish_ice_rain2,ish_agg1,ish_agg2,ish_sedimentation1,ish_sedimentation2,ish_rime_density1,ish_rime_density2,ish_iwci1,ish_iwci2,ish_iwcf1,ish_iwcf2,ish_vi1,ish_vi2,ish_vf1,ish_vf2,ish_rni1,ish_rni2,ish_rnf1,ish_rnf2,ish_rimesum1,ish_rimesum2,ish_rimesumr1,ish_rimesumr2,ish_vfr1,ish_vfr2,ish_gdenavg1,ish_gdenavg2,ish_gdenavgr1,ish_gdenavgr2,ish_rhorimeout1,ish_rhorimeout2,ish_iwcfr1,ish_iwcfr2,ish_rhoair1,ish_ratio1_a,ish_ratio2_a,ish_ratio1_b,ish_ratio2_b
+package   jensen_ishmael  mp_physics==55               -             moist:qv,qc,qr,qi,qi2,qi3;scalar:qnr,qni,qvoli,qaoli,qni2,qvoli2,qaoli2,qni3,qvoli3,qaoli3;state:re_cloud,re_ice,vmi3d,rhopo3d,di3d,phii3d,itype,vmi3d_2,rhopo3d_2,di3d_2,phii3d_2,itype_2,vmi3d_3,rhopo3d_3,di3d_3,phii3d_3,itype_3,refl_10cm,ish_vap_growth1,ish_vap_growth2,ish_rime_growth1,ish_rime_growth2,ish_melt1,ish_melt2,ish_nuc1,ish_nuc2,ish_ice_rain1,ish_ice_rain2,ish_agg1,ish_agg2,ish_sedimentation1,ish_sedimentation2,ish_rime_density1,ish_rime_density2,ish_iwci1,ish_iwci2,ish_iwcf1,ish_iwcf2,ish_vi1,ish_vi2,ish_vf1,ish_vf2,ish_rni1,ish_rni2,ish_rnf1,ish_rnf2,ish_rimesum1,ish_rimesum2,ish_rimesumr1,ish_rimesumr2,ish_vfr1,ish_vfr2,ish_gdenavg1,ish_gdenavg2,ish_gdenavgr1,ish_gdenavgr2,ish_rhorimeout1,ish_rhorimeout2,ish_iwcfr1,ish_iwcfr2,ish_rhoair1,ish_ratio1_a,ish_ratio2_a,ish_ratio1_b,ish_ratio2_b,ish_prdr_c1,ish_prdr_c2,ish_prdr_r1,ish_prdr_r2
 package   etampnew        mp_physics==95               -             moist:qv,qc,qr,qs;scalar:qt;state:f_ice_phy,f_rain_phy,f_rimef_phy
 package   gsfcgcescheme   mp_physics==97               -             moist:qv,qc,qr,qi,qs,qg
 

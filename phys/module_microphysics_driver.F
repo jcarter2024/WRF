@@ -90,15 +90,19 @@ SUBROUTINE microphysics_driver(                                          &
                       ,ish_gdenavg2                                        &
                       ,ish_gdenavgr1                                       &
                       ,ish_gdenavgr2                                       &
-                      ,ish_rhorimeout1                                            &
-                      ,ish_rhorimeout2                                            &
-                      ,ish_iwcfr1                                        &
-                      ,ish_iwcfr2                                        &
-                      ,ish_rhoair                                       &         
-                      ,ish_ratio1_a                                       &
-                      ,ish_ratio2_a                                       &
-                      ,ish_ratio1_b                                       &
-                      ,ish_ratio2_b                                       &
+                      ,ish_rhorimeout1                                     &
+                      ,ish_rhorimeout2                                     &
+                      ,ish_iwcfr1                                          &
+                      ,ish_iwcfr2                                          &
+                      ,ish_rhoair                                          &         
+                      ,ish_ratio1_a                                        &
+                      ,ish_ratio2_a                                        &
+                      ,ish_ratio1_b                                        &
+                      ,ish_ratio2_b                                        &
+                      ,ish_prdr_c1                                         &
+                      ,ish_prdr_c2                                         &
+                      ,ish_prdr_r1                                         &
+                      ,ish_prdr_r2                                         &
 !======================
                       !Variables required for CAMMGMP Scheme
                       ,dlf,dlf2,t_phy,p_hyd,p8w_hyd,tke_pbl,z_at_w,qfx   &
@@ -559,6 +563,10 @@ SUBROUTINE microphysics_driver(                                          &
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ratio2_a
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ratio1_b
    REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_ratio2_b
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_prdr_c1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_prdr_c2
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_prdr_r1
+   REAL, DIMENSION(ims:ime , kms:kme, jms:jme ), INTENT(INOUT) :: ish_prdr_r2
 ! ==========================================================
    REAL, DIMENSION( ims:ime , kms:kme , jms:jme ),                    &
          INTENT(INOUT) ::                                         th
@@ -1367,25 +1375,29 @@ REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                        &
              ish_rni2=ish_rni2,                          &  !*
              ish_rnf1=ish_rnf1,                          &  !* 
              ish_rnf2=ish_rnf2,                          &  !*
-             ish_rimesum1=ish_rimesum1,                        &  !* 
-             ish_rimesum2=ish_rimesum2,                        &  !*
-             ish_rimesumr1=ish_rimesumr1,                            &  !*
-             ish_rimesumr2=ish_rimesumr2,                            &  !* 
-             ish_vfr1=ish_vfr1,                            &  !* 
-             ish_vfr2=ish_vfr2,                            &  !*
-             ish_gdenavg1=ish_gdenavg1,                          &  !* 
-             ish_gdenavg2=ish_gdenavg2,                          &  !*
-             ish_gdenavgr1=ish_gdenavgr1,                          &  !* 
-             ish_gdenavgr2=ish_gdenavgr2,                          &  !*
-             ish_rhorimeout1=ish_rhorimeout1,                            &  !* 
-             ish_rhorimeout2=ish_rhorimeout2,                            &  !*
-             ish_iwcfr1=ish_iwcfr1,                          &  !* 
-             ish_iwcfr2=ish_iwcfr2,                          &  !*
-             ish_rhoair=ish_rhoair,                          &  !*  
-             ish_ratio1_a=ish_ratio1_a,                          &  !*             
-             ish_ratio2_a=ish_ratio2_a,                          &  !*
-             ish_ratio1_b=ish_ratio1_b,                          &  !*             
-             ish_ratio2_b=ish_ratio2_b,                          &  !*
+             ish_rimesum1=ish_rimesum1,                  &  !* 
+             ish_rimesum2=ish_rimesum2,                  &  !*
+             ish_rimesumr1=ish_rimesumr1,                &  !*
+             ish_rimesumr2=ish_rimesumr2,                &  !* 
+             ish_vfr1=ish_vfr1,                          &  !* 
+             ish_vfr2=ish_vfr2,                          &  !*
+             ish_gdenavg1=ish_gdenavg1,                  &  !* 
+             ish_gdenavg2=ish_gdenavg2,                  &  !*
+             ish_gdenavgr1=ish_gdenavgr1,                &  !* 
+             ish_gdenavgr2=ish_gdenavgr2,                &  !*
+             ish_rhorimeout1=ish_rhorimeout1,            &  !* 
+             ish_rhorimeout2=ish_rhorimeout2,            &  !*
+             ish_iwcfr1=ish_iwcfr1,                      &  !* 
+             ish_iwcfr2=ish_iwcfr2,                      &  !*
+             ish_rhoair=ish_rhoair,                      &  !*  
+             ish_ratio1_a=ish_ratio1_a,                  &  !*             
+             ish_ratio2_a=ish_ratio2_a,                  &  !*
+             ish_ratio1_b=ish_ratio1_b,                  &  !*             
+             ish_ratio2_b=ish_ratio2_b,                  &  !*
+             ish_prdr_c1=ish_prdr_c1,                      &  !*
+             ish_prdr_c2=ish_prdr_c2,                      &  !*
+             ish_prdr_r1=ish_prdr_r1,                      &  !*
+             ish_prdr_r2=ish_prdr_r2,                      &  !*
              P=p,                                &  !*                                                                         
              DZ=dz8w,                            &  !* !
              TH=th,                              &  !*                                                                         

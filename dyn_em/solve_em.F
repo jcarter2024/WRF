@@ -3717,13 +3717,17 @@ BENCH_START(micro_driver_tim)
       &        ,ish_gdenavgr2=grid%ish_gdenavgr2                   &
       &        ,ish_rhorimeout1=grid%ish_rhorimeout1               &
       &        ,ish_rhorimeout2=grid%ish_rhorimeout2               &
-      &        ,ish_iwcfr1=grid%ish_iwcfr1                     &
-      &        ,ish_iwcfr2=grid%ish_iwcfr2                     &
-      &        ,ish_rhoair=grid%ish_rhoair                   &
+      &        ,ish_iwcfr1=grid%ish_iwcfr1                         &
+      &        ,ish_iwcfr2=grid%ish_iwcfr2                         &
+      &        ,ish_rhoair=grid%ish_rhoair                         &
       &        ,ish_ratio1_a=grid%ish_ratio1_a                   &
       &        ,ish_ratio2_a=grid%ish_ratio2_a                   &
       &        ,ish_ratio1_b=grid%ish_ratio1_b                   &
       &        ,ish_ratio2_b=grid%ish_ratio2_b                   &
+      &        ,ish_prdr_c1=grid%ish_prdr_c1                     &
+      &        ,ish_prdr_c2=grid%ish_prdr_c2                     &
+      &        ,ish_prdr_r1=grid%ish_prdr_r1                     &
+      &        ,ish_prdr_r2=grid%ish_prdr_r2                     &
       ! Variables required for CAMMGMP Scheme
       &        ,DLF=grid%dlf,DLF2=grid%dlf2,T_PHY=grid%t_phy,P_HYD=grid%p_hyd  &
       &        ,P8W_HYD=grid%p_hyd_w,TKE_PBL=grid%tke_pbl                 &

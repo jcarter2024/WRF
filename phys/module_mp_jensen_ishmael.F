@@ -229,8 +229,9 @@ contains
        ish_vfr1, ish_vfr2, ish_gdenavg1, ish_gdenavg2,   &
        ish_gdenavgr1, ish_gdenavgr2, ish_rhorimeout1,    &
        ish_rhorimeout2, ish_iwcfr1, ish_iwcfr2,          &
-       ish_rhoair, ish_ratio1_a, ish_ratio2_a, &
-       ish_ratio1_b, ish_ratio2_b,                       &
+       ish_rhoair, ish_ratio1_a, ish_ratio2_a,           &
+       ish_ratio1_b, ish_ratio2_b, ish_prdr_c1,          &
+       ish_prdr_c2,  ish_prdr_r1, ish_prdr_r2,           &
        P, DZ,                                            &  
        TH, QV, QC, QR, NR, QI1, NI1, AI1, CI1,           &
        QI2, NI2, AI2, CI2,                               &
@@ -338,8 +339,9 @@ contains
        ish_vfr1, ish_vfr2, ish_gdenavg1, ish_gdenavg2,   &
        ish_gdenavgr1, ish_gdenavgr2, ish_rhorimeout1,    &
        ish_rhorimeout2, ish_iwcfr1, ish_iwcfr2,          &
-       ish_rhoair, ish_ratio1_a, ish_ratio2_a,  &
-       ish_ratio1_b, ish_ratio2_b                                            
+       ish_rhoair, ish_ratio1_a, ish_ratio2_a,           &
+       ish_ratio1_b, ish_ratio2_b, ish_prdr_c1,          &
+       ish_prdr_c2, ish_prdr_r1,  ish_prdr_r2                                            
 
   !.. 2D variables
     real, dimension(ims:ime, jms:jme), intent(inout) ::              &
@@ -372,7 +374,8 @@ contains
     real, dimension(cat, kts:kte) ::                     &
        rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k, & 
        rimesum_k, rimesumr_k, vfr_k, gdenavg_k, gdenavgr_k, &
-       rhorimeout_k, iwcfr_k, ratio_a_k, ratio_b_k
+       rhorimeout_k, iwcfr_k, ratio_a_k, ratio_b_k, prdr_c_k, &
+       prdr_r_k
              
   !.. Precipitation
     real :: qrpre1d
@@ -451,36 +454,40 @@ contains
              sed_equation(ICE2,k)   = 0.
              rime_density(ICE1,k)   = 0.
              rime_density(ICE2,k)   = 0.
-             iwci_k(ICE1,k)        = 0.
-             iwci_k(ICE2,k)        = 0.
-             iwcf_k(ICE1,k)        = 0.
-             iwcf_k(ICE2,k)        = 0.
-             vi_k(ICE1,k)        = 0.
-             vi_k(ICE2,k)        = 0.
-             vf_k(ICE1,k)        = 0.
-             vf_k(ICE2,k)        = 0.
-             rni_k(ICE1,k)        = 0.
-             rni_k(ICE2,k)        = 0.
-             rnf_k(ICE1,k)        = 0.
-             rnf_k(ICE2,k)        = 0.
-             rimesum_k(ICE1,k)    =0.
-             rimesum_k(ICE2,k)    =0.
-             rimesumr_k(ICE1,k)    =0.
-             rimesumr_k(ICE2,k)    =0.
-             vfr_k(ICE1,k)         =0.
-             vfr_k(ICE2,k)         =0.
-             gdenavg_k(ICE1,k)     =0.
-             gdenavg_k(ICE2,k)     =0.
-             gdenavgr_k(ICE1,k)     =0.
-             gdenavgr_k(ICE2,k)     =0.
-             rhorimeout_k(ICE1,k)         =0.
-             rhorimeout_k(ICE2,k)         =0.
-             iwcfr_k(ICE1,k)     =0.
-             iwcfr_k(ICE2,k)     =0.
-             ratio_a_k(ICE1,k)     =0.
-             ratio_a_k(ICE2,k)     =0.
-             ratio_b_k(ICE1,k)     =0.
-             ratio_b_k(ICE2,k)     =0. 
+             iwci_k(ICE1,k)         = 0.
+             iwci_k(ICE2,k)         = 0.
+             iwcf_k(ICE1,k)         = 0.
+             iwcf_k(ICE2,k)         = 0.
+             vi_k(ICE1,k)           = 0.
+             vi_k(ICE2,k)           = 0.
+             vf_k(ICE1,k)           = 0.
+             vf_k(ICE2,k)           = 0.
+             rni_k(ICE1,k)          = 0.
+             rni_k(ICE2,k)          = 0.
+             rnf_k(ICE1,k)          = 0.
+             rnf_k(ICE2,k)          = 0.
+             rimesum_k(ICE1,k)      = 0.
+             rimesum_k(ICE2,k)      = 0.
+             rimesumr_k(ICE1,k)     = 0.
+             rimesumr_k(ICE2,k)     = 0.
+             vfr_k(ICE1,k)          = 0.
+             vfr_k(ICE2,k)          = 0.
+             gdenavg_k(ICE1,k)      = 0.
+             gdenavg_k(ICE2,k)      = 0.
+             gdenavgr_k(ICE1,k)     = 0.
+             gdenavgr_k(ICE2,k)     = 0.
+             rhorimeout_k(ICE1,k)   = 0.
+             rhorimeout_k(ICE2,k)   = 0.
+             iwcfr_k(ICE1,k)        = 0.
+             iwcfr_k(ICE2,k)        = 0.
+             ratio_a_k(ICE1,k)      = 0.
+             ratio_a_k(ICE2,k)      = 0.
+             ratio_b_k(ICE1,k)      = 0.
+             ratio_b_k(ICE2,k)      = 0.
+             prdr_c_k(ICE1,k)       = 0.
+             prdr_c_k(ICE2,k)       = 0.
+             prdr_r_k(ICE1,k)       = 0.
+             prdr_r_k(ICE2,k)       = 0. 
           enddo !.. (vertical k-loop)
 
   !.. Call me Ishmael.
@@ -491,7 +498,7 @@ contains
                rime_growth, melt, nuc, ice_rain, agg, sed_equation, rime_density, &
                iwci_k, iwcf_k, vi_k, vf_k, rni_k, rnf_k, rimesum_k, rimesumr_k,&
                vfr_k, gdenavg_k, gdenavgr_k, rhorimeout_k, iwcfr_k, &
-               ratio_a_k, ratio_b_k, rhoair)
+               ratio_a_k, ratio_b_k, rhoair, prdr_c_k, prdr_r_k)
 
   !.. Send the 1D columns from newmicro back to WRF
           do k=kts,kte !.. k loop (vertical)
@@ -572,15 +579,19 @@ contains
              ish_gdenavg2(i,k,j)      =gdenavg_k(ICE2,k)
              ish_gdenavgr1(i,k,j)     =gdenavgr_k(ICE1,k)
              ish_gdenavgr2(i,k,j)     =gdenavgr_k(ICE2,k)
-             ish_rhorimeout1(i,k,j)     =rhorimeout_k(ICE1,k)
-             ish_rhorimeout2(i,k,j)     =rhorimeout_k(ICE2,k)
-             ish_iwcfr1(i,k,j)          =iwcfr_k(ICE1,k)
-             ish_iwcfr2(i,k,j)          =iwcfr_k(ICE2,k)
-             ish_rhoair(i,k,j)      =rhoair(k)
-             ish_ratio1_a(i,k,j)     =ratio_a_k(ICE1,k)
-             ish_ratio2_a(i,k,j)     =ratio_a_k(ICE2,k)
-             ish_ratio1_b(i,k,j)     =ratio_b_k(ICE1,k)
-             ish_ratio2_b(i,k,j)     =ratio_b_k(ICE2,k)
+             ish_rhorimeout1(i,k,j)   =rhorimeout_k(ICE1,k)
+             ish_rhorimeout2(i,k,j)   =rhorimeout_k(ICE2,k)
+             ish_iwcfr1(i,k,j)        =iwcfr_k(ICE1,k)
+             ish_iwcfr2(i,k,j)        =iwcfr_k(ICE2,k)
+             ish_rhoair(i,k,j)        =rhoair(k)
+             ish_ratio1_a(i,k,j)      =ratio_a_k(ICE1,k)
+             ish_ratio2_a(i,k,j)      =ratio_a_k(ICE2,k)
+             ish_ratio1_b(i,k,j)      =ratio_b_k(ICE1,k)
+             ish_ratio2_b(i,k,j)      =ratio_b_k(ICE2,k)
+             ish_prdr_c1(i,k,j)       =prdr_c_k(ICE1,k)
+             ish_prdr_c2(i,k,j)       =prdr_c_k(ICE2,k)
+             ish_prdr_r1(i,k,j)       =prdr_r_k(ICE1,k)
+             ish_prdr_r2(i,k,j)       =prdr_r_k(ICE2,k)
           enddo
 
   !.. Accumulated precipitation and precipitation rates
@@ -606,7 +617,7 @@ contains
        qrpre1d, qipre1d, vap_growth,rime_growth, melt, nuc, ice_rain,   &
        agg, sed_equation, rime_density, iwci_k, iwcf_k, vi_k, vf_k, rni_k,&
        rnf_k, rimesum_k, rimesumr_k, vfr_k, gdenavg_k, gdenavgr_k, rhorimeout_k,&
-       iwcfr_k, ratio_a_k, ratio_b_k,rhoair)
+       iwcfr_k, ratio_a_k, ratio_b_k,rhoair,prdr_c_k,prdr_r_k)
 
     implicit none
     
@@ -668,6 +679,8 @@ contains
      real, dimension(cat, kts:kte), intent(inout) :: iwcfr_k
      real, dimension(cat, kts:kte), intent(inout) :: ratio_a_k
      real, dimension(cat, kts:kte), intent(inout) :: ratio_b_k
+     real, dimension(cat, kts:kte), intent(inout) :: prdr_c_k
+     real, dimension(cat, kts:kte), intent(inout) :: prdr_r_k
 
     real :: qrpre1d                 !.. Rain precipitation accumulation (mm)
     real, dimension(cat) :: qipre1d !.. Ice liquid-equivalent precipitation accumulation (mm)
@@ -859,6 +872,8 @@ contains
     real :: iwcfr_cc(cat)           ! For vaporgrow    
     real :: ratio_a_cc(cat)
     real :: ratio_b_cc(cat)
+    real :: prdr_c(cat)
+    real :: prdr_r(cat)
 
   !--------------------------------------------------------------------------------------------------------------!
   !--------------------------------------------------------------------------------------------------------------!
@@ -1012,32 +1027,36 @@ contains
              agg(cc,k)            = 0.      
              sed_equation(cc,k)   = 0.  
              rime_density(cc,k)   = 0.
-             iwci_k(cc,k)   = 0.             
-             iwcf_k(cc,k)   = 0.
-             vi_k(cc,k)     = 0.
-             vf_k(cc,k)     = 0.
-             rni_k(cc,k)    = 0.
-             rnf_k(cc,k)    = 0.
-             rimesum_k(cc,k)     = 0.
-             rimesumr_k(cc,k)    = 0.
-             vfr_k(cc,k)         = 0.
-             gdenavg_k(cc,k)     = 0.
-             gdenavgr_k(cc,k)    = 0.
-             rhorimeout_k(cc,k)    = 0.
-             iwcfr_k(cc,k)         = 0.
-             ratio_a_k(cc,k)    = 0.  
-             ratio_b_k(cc,k)    = 0.
+             iwci_k(cc,k)         = 0.             
+             iwcf_k(cc,k)         = 0.
+             vi_k(cc,k)           = 0.
+             vf_k(cc,k)           = 0.
+             rni_k(cc,k)          = 0.
+             rnf_k(cc,k)          = 0.
+             rimesum_k(cc,k)      = 0.
+             rimesumr_k(cc,k)     = 0.
+             vfr_k(cc,k)          = 0.
+             gdenavg_k(cc,k)      = 0.
+             gdenavgr_k(cc,k)     = 0.
+             rhorimeout_k(cc,k)   = 0.
+             iwcfr_k(cc,k)        = 0.
+             ratio_a_k(cc,k)      = 0.  
+             ratio_b_k(cc,k)      = 0.
+             prdr_c_k(cc,k)       = 0.
+             prdr_r_k(cc,k)       = 0.
 !and my variables 
-             iwci_cc(cc) = 0.
-             iwcf_cc(cc)   =0.
-             vi_cc(cc)   =0.
-             vf_cc(cc) = 0.
-             rnf_cc(cc) = 0.
-             vfr_cc(cc) = 0.
-             rhorimeout_cc(cc)=0.
-             iwcfr_cc(cc) = 0.
-             ratio_a_cc(cc) = 0.
-             ratio_b_cc(cc) = 0.          
+             iwci_cc(cc)      = 0.
+             iwcf_cc(cc)      = 0.
+             vi_cc(cc)        = 0.
+             vf_cc(cc)        = 0.
+             rnf_cc(cc)       = 0.
+             vfr_cc(cc)       = 0.
+             rhorimeout_cc(cc)= 0.
+             iwcfr_cc(cc)     = 0.
+             ratio_a_cc(cc)   = 0.
+             ratio_b_cc(cc)   = 0.      
+             prdr_c(cc)       = 0.
+             prdr_r(cc)       = 0.    
           enddo
           dbz1d(k)=-35.
           qrpre1d=0.
@@ -1578,12 +1597,17 @@ contains
                    anfr=max(anfr,ani(cc))
 
   !.. Riming mass growth and axes rates
-                   prdr(cc)=(iwcfr-iwci)*i_rhoair(k)*i_dt 
+                   prdr(cc)=(iwcfr-iwci)*i_rhoair(k)*i_dt
+  !..MY RIMING VARIABLES
+                   prdr_c(cc)=(vfr-vi)*ni(cc,k)*i_dt*(qcrimefrac(cc)*gdenavg(cc)) 
+                   prdr_r(cc)=(vfr-vi)*ni(cc,k)*i_dt*((1.-qcrimefrac(cc))*gdenavgr(cc))
                    ardr(cc)=(2.*(anfr-ani(cc))*cni(cc)+(cnfr-cni(cc))*ani(cc))*ani(cc)*ni(cc,k)*i_dt
                    crdr(cc)=(2.*(cnfr-cni(cc))*ani(cc)+(anfr-ani(cc))*cni(cc))*cni(cc)*ni(cc,k)*i_dt
 
   !.. These can never be negative
                    prdr(cc) = max(prdr(cc),0.)
+                   prdr_c(cc) = max(prdr_c(cc),0.)
+                   prdr_r(cc) = max(prdr_r(cc),0.)
                    ardr(cc) = max(ardr(cc),0.)
                    crdr(cc) = max(crdr(cc),0.)
                    
@@ -1597,7 +1621,11 @@ contains
 
   !.. For wet growth, mass is added but soaks into the particle and thus
   !.. the density increases but the size does not
-                   prdr(cc)=(iwcfr-iwci)*i_rhoair(k)*i_dt 
+                   prdr(cc)=(iwcfr-iwci)*i_rhoair(k)*i_dt
+  !..MY RIMING VARIABLES
+                   prdr_c(cc)=(vfr-vi)*ni(cc,k)*i_dt*(qcrimefrac(cc)*gdenavg(cc)) 
+                   prdr_r(cc)=(vfr-vi)*ni(cc,k)*i_dt*((1.-qcrimefrac(cc))*gdenavgr(cc))
+  !........ 
                    ardr(cc)=0.
                    crdr(cc)=0.
                    
@@ -1884,6 +1912,7 @@ contains
              mim = mim*ratio
              do cc = 1, cat
                 prdr(cc) = prdr(cc)*ratio
+                prdr_c(cc) = prdr_c(cc)*ratio
                 ardr(cc) = ardr(cc)*ratio
                 crdr(cc) = crdr(cc)*ratio
              enddo
@@ -1909,6 +1938,7 @@ contains
              ratio_b_cc(cc) = ratio
              do cc = 1, cat
                 prdr(cc) = prdr(cc)*ratio
+                prdr_r(cc) = prdr_r(cc)*ratio
                 ardr(cc) = ardr(cc)*ratio
                 crdr(cc) = crdr(cc)*ratio
                 qi_qr_nrn(cc)=qi_qr_nrn(cc)*ratio
@@ -2974,6 +3004,8 @@ contains
            iwcfr_k(cc,k)            = iwcfr_cc(cc)
            ratio_a_k(cc,k)       = ratio_a_cc(cc)
            ratio_b_k(cc,k)       = ratio_b_cc(cc)
+           prdr_c_k(cc,k)       = prdr_c(cc)
+           prdr_r_k(cc,k)      = prdr_r(cc)
        enddo
     enddo     !.. do k = kts, kte
 
